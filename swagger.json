@@ -1,0 +1,126 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "First API",
+        "description": "This is first api <b>Pavan's Coding</b> using NodeJS."
+    },
+    "host": "localhost:5000",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Auth endpoints"
+        }
+        
+    ],
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "securityDefinitions": {
+        "Authorization": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "description": "Value: Bearer ",
+            "in": "header",
+            "scheme": "bearer"
+        }
+    },
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "obj",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/LoginModel"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "obj",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/RegisterModel"
+                        }
+                    }
+                ],
+                "responses": {
+                    "422": {
+                        "description": "Unprocessable Entity"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "LoginModel": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "john@mail.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "pavan123"
+                }
+            },
+            "required": [
+                "email",
+                "password"
+            ]
+        },
+        "RegisterModel": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "John Snow"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "mail@mail.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "john123"
+                },
+                "confirm_password": {
+                    "type": "string",
+                    "example": "john123"
+                }
+            },
+            "required": [
+                "name",
+                "email",
+                "password"
+            ]
+        }
+        
+    }
+}
