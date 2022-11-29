@@ -1,10 +1,9 @@
 import express from 'express'
-import { connect } from 'mongoose'
+
 import {APP_PORT, DB_URL} from './config'
 import errorHandler from './middlewares/errorHandler'
 import mongoose from 'mongoose'
 
-import swaggerJSDoc from 'swagger-jsdoc'
 import swaggerUi  from 'swagger-ui-express'
 import swaggerDocument from './swagger.json'
 
@@ -21,28 +20,11 @@ db.on('error',console.error.bind(console,'connection error: '))
 db.once('open',() =>{
     console.log('DB connected...')
 })
-//#region Swagger Setup
-// const swaggerOprion = {
-//     swaggerDefinition:{
-//         info:{
-//             title: 'First API',
-//             description: 'This is simple api for self learning purpose',
-//             version: '1.0.0',
-//             contact:{
-//                 name: 'Pavan Yadav'
-//             },
-//             servers:["http://localhost:5000/"]
-//         }
-//     },
-//     apis:['./routes/*.js']
-// }
-
-
-
-// const swaggerDoc = swaggerJSDoc(swaggerOprion)
-app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 //#endregion
+
+//Swagger Setup
+app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 //By default JSON is disable in Express
 app.use(express.json())

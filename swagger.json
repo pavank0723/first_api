@@ -3,7 +3,7 @@
     "info": {
         "version": "1.0.0",
         "title": "First API",
-        "description": "This is first api <b>Pavan's Coding</b> using NodeJS."
+        "description": "This is <b>Pavan's</b> first api using NodeJS."
     },
     "host": "localhost:5000",
     "basePath": "/",
@@ -12,7 +12,6 @@
             "name": "Auth",
             "description": "Auth endpoints"
         }
-        
     ],
     "schemes": [
         "http",
@@ -75,6 +74,33 @@
                     }
                 }
             }
+        },
+        "/me": {
+            "get": {
+                "tags": [
+                    "Check"
+                ],
+                "description": "",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
         }
     },
     "definitions": {
@@ -87,7 +113,7 @@
                 },
                 "password": {
                     "type": "string",
-                    "example": "pavan123"
+                    "example": "john123"
                 }
             },
             "required": [
@@ -121,6 +147,5 @@
                 "password"
             ]
         }
-        
     }
 }

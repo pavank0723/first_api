@@ -1,5 +1,6 @@
 import express from "express";
-import { registerController, loginController } from "../controllers";
+import { registerController, loginController,userController } from "../controllers";
+import auth from "../middlewares/auth";
 
 const router = express.Router()
 
@@ -23,5 +24,7 @@ router.post('/auth/register',registerController.register)
  *  description: Use to register a user
  */
 router.post('/auth/login',loginController.login)
+
+router.get('/me',auth,userController.me)
 
 export default router
