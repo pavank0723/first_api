@@ -49,6 +49,7 @@ const loginController = {
                 '1y',
                 REFRESH_SECRET
             )
+            //DB whitelist
             await RefreshToken.create(
                 {
                     token:refresh_token
@@ -64,6 +65,27 @@ const loginController = {
         }catch(err){
             return next(err)
         }
+    },
+
+    async logout(req,res,next){
+        //Validation
+        const refreshSchema = Joi.object({
+            refresh_token: Joi.string().required()
+        })
+
+        //==--->> 2. Joi Validate if error
+        const { error } = refreshSchema.validate(req.body)
+
+        if (error) {
+            return next(error)
+        }
+
+        try {
+            await RefreshToken.deleteOne({token:req.body.refresh_token})
+        } catch (error) {
+            return next(new Error('Somethink went wrong in DB'))
+        }
+        res.json({status:1})
     }
 }
 

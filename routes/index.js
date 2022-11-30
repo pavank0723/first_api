@@ -1,5 +1,5 @@
 import express from "express";
-import { registerController, loginController,userController } from "../controllers";
+import { registerController, loginController,userController, refreshController } from "../controllers";
 import auth from "../middlewares/auth";
 
 const router = express.Router()
@@ -32,5 +32,9 @@ router.post('/auth/login',loginController.login)
  *  description: view the verify user
  */
 router.get('/auth/user',auth,userController.me)
+
+router.post('/auth/refresh',refreshController.refresh)
+
+router.post('/auth/logout',auth,loginController.logout)
 
 export default router
