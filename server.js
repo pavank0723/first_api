@@ -22,12 +22,20 @@ db.once('open',() =>{
 })
 
 //#endregion
-
+app.use(express.static(__dirname + '/public'));
 //Swagger Setup
-app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+var options = {
+    // customCss: '.swagger-ui .topbar {background-color: #3f6cff;}.swagger-ui .opblock.opblock-post .opblock-summary-method {background: #0255c1;}',
+    customSiteTitle: "First API | Welcome",
+    customCssUrl: 'public/css/styles.css',
+    customfavIcon: 'public/images/favicon.png'
+};
+app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDocument,options))
 
 //By default JSON is disable in Express
 app.use(express.json())
+
+
 
 app.use(routes)
 app.use(errorHandler)

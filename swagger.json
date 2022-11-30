@@ -10,7 +10,7 @@
     "tags": [
         {
             "name": "Auth",
-            "description": "Auth endpoints"
+            "description": "All the autherization method"
         }
     ],
     "schemes": [
@@ -32,13 +32,18 @@
     "produces": [
         "application/json"
     ],
+    "JWT": {
+        "type": "apiKey",
+        "name": "token",
+        "in": "header"
+    },
     "paths": {
         "/auth/login": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
-                "description": "",
+                "description": "Login and get the token",
                 "parameters": [
                     {
                         "name": "obj",
@@ -57,7 +62,7 @@
                 "tags": [
                     "Auth"
                 ],
-                "description": "",
+                "description": "Register user",
                 "parameters": [
                     {
                         "name": "obj",
@@ -75,12 +80,12 @@
                 }
             }
         },
-        "/me": {
+        "/auth/user": {
             "get": {
                 "tags": [
-                    "Check"
+                    "Auth"
                 ],
-                "description": "",
+                "description": "Get the user required details",
                 "responses": {
                     "200": {
                         "description": "OK"

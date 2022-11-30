@@ -25,6 +25,12 @@ router.post('/auth/register',registerController.register)
  */
 router.post('/auth/login',loginController.login)
 
-router.get('/me',auth,userController.me)
+/**
+ * @swagger
+ * /user:
+ * get:
+ *  description: view the verify user
+ */
+router.get('/auth/user',auth,userController.me)
 
 export default router
