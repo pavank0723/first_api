@@ -11,6 +11,10 @@
         {
             "name": "Auth",
             "description": "All the autherization method"
+        },
+        {
+            "name": "Product",
+            "description": "All the product method"
         }
     ],
     "schemes": [
@@ -106,6 +110,39 @@
                     }
                 ]
             }
+        },
+        "/comp/product": {
+            "post": {
+                "tags": [
+                    "Product"
+                ],
+                "description": "Add product in store",
+                "consumes":"multipart/form-data",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "price",
+                        "in": "number",
+                        "required": true
+                    },
+                    {
+                        "name": "size",
+                        "in": "string",
+                        "required": true
+                    },
+                    {
+                        "name": "image",
+                        "in": "file",
+                        "required": true,
+                        "type": "file"
+                    }
+                ],
+                "responses": {}
+            }
         }
     },
     "definitions": {
@@ -150,6 +187,33 @@
                 "name",
                 "email",
                 "password"
+            ]
+        },
+        "StoreModel": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "example": "Product 1"
+                },
+                "price": {
+                    "type": "string",
+                    "example": "10000"
+                },
+                "size": {
+                    "type": "string",
+                    "example": "L"
+                },
+                "image": {
+                    "type": "file",
+                    "example": "john123"
+                }
+            },
+            "required": [
+                "name",
+                "price",
+                "size",
+                "image"
             ]
         }
     }

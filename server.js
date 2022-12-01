@@ -6,12 +6,13 @@ import mongoose from 'mongoose'
 
 import swaggerUi  from 'swagger-ui-express'
 import swaggerDocument from './swagger.json'
+import path from 'path'
 
 const app = express()
 
 import routes from './routes/index'
 
-//DB Connection
+//#region DB Connection
 mongoose.connect(DB_URL,{useNewUrlParser:true, useUnifiedTopology:true})
 
 const db = mongoose.connection;
@@ -23,7 +24,7 @@ db.once('open',() =>{
 
 //#endregion
 app.use(express.static(__dirname + '/public'));
-//Swagger Setup
+//#region Swagger Setup
 var options = {
     // customCss: '.swagger-ui .topbar {background-color: #3f6cff;}.swagger-ui .opblock.opblock-post .opblock-summary-method {background: #0255c1;}',
     customSiteTitle: "First API | Welcome",
@@ -31,11 +32,14 @@ var options = {
     customfavIcon: 'public/images/favicon.png'
 };
 app.use('/api-docs',swaggerUi.serve, swaggerUi.setup(swaggerDocument,options))
+//#endregion
 
 //By default JSON is disable in Express
 app.use(express.json())
 
-
+//Get the root folder
+global.appRoot = path.resolve(__dirname)
+app.use(express.urlencoded({extended:false}))
 
 app.use(routes)
 app.use(errorHandler)
