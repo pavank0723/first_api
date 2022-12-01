@@ -23,4 +23,6 @@ router.delete('/comp/delete/product/:id',[auth,admin],productController.destroy)
 
 router.get('/comp/view/products',productController.index)
 
+router.get('/comp/view/product/:id',productController.show)
+
 export default router

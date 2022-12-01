@@ -25,6 +25,6 @@ const productSchema = new Schema({
             return `${APP_URL}/${image}`
         }
     },
-}, { timestamps: true, toJSON: { getters: true } })
+}, { timestamps: true, toJSON: { getters: true }, id:false })
 
 export default mongoose.model('Product', productSchema, 'products')

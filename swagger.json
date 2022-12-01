@@ -234,6 +234,29 @@
                 "description": "View products in store",                
                 "responses": {}
             }
+        },
+        "/comp/view/product/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "ID of user that we want to find",
+                    "type": "string"
+                }
+            ],
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "description": "Add product in store",                
+                "responses": {},
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
         }
     },
     "definitions": {

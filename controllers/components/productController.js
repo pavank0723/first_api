@@ -84,7 +84,7 @@ const productController = {
             }
             // console.log(req.body)
             let filePath
-            if(req.file){
+            if (req.file) {
                 req.file.path
             }
             var newFilePath = filePath.split('\\').join('/')
@@ -92,7 +92,7 @@ const productController = {
             const { error } = productSchema.validate(req.body)
             if (error) {
                 //Delete the uploaded file when validation failed
-                if(req.file){
+                if (req.file) {
                     fs.unlink(`${appRoot}/${newFilePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
                         if (err) {
                             return next(CustomErrorHandler.serverError(err.message))
@@ -100,7 +100,7 @@ const productController = {
                     }
                     )
                 }
-                
+
                 return next(error)
             }
             const { name, price, size } = req.body
@@ -109,16 +109,16 @@ const productController = {
             try {
                 document = await Product.findOneAndUpdate(
                     {
-                        _id:req.params.id // id => comes from route
+                        _id: req.params.id // id => comes from route
                     },
                     {
                         name,
                         price,
                         size,
-                        ...(req.file && {image: newFilePath})
-                        
+                        ...(req.file && { image: newFilePath })
+
                     },
-                    {new : true}
+                    { new: true }
                 )
                 console.log(document)
             } catch (error) {
@@ -128,23 +128,23 @@ const productController = {
         }
         )
     },
-    
+
     //delete 
-    async destroy(req,res,next){
+    async destroy(req, res, next) {
         const document = await Product.findOneAndRemove(
             {
-                _id:req.params.id
+                _id: req.params.id
             }
         )
-        if(!document){
+        if (!document) {
             return next(new Error('Nothing to delete'))
         }
 
         //image delete
         const imagePath = document._doc.image
 
-        fs.unlink(`${appRoot}/${imagePath}`,(err)=>{
-            if(err){
+        fs.unlink(`${appRoot}/${imagePath}`, (err) => {
+            if (err) {
                 return next(CustomErrorHandler.serverError())
             }
         })
@@ -153,20 +153,34 @@ const productController = {
     },
 
     //all products
-    async index(req,res,next){
+    async index(req, res, next) {
         let documents
         //pagination mongoose-pagination
         try {
             documents = await Product.find().select('-updatedAt -__v').sort(
-                    {
-                     _id:-1   
-                    }
-                ) 
+                {
+                    _id: -1
+                }
+            )
             //select() use for which field not show in res
         } catch (error) {
             return next(CustomErrorHandler.serverError())
         }
         return res.json(documents)
+    },
+
+    async show(req, res, next) {
+        let document
+        try {
+            document = await Product.findOne(
+                {
+                    _id: req.params.id
+                }
+            ).select('-updatedAt -__v')
+        } catch (error) {
+            return next(CustomErrorHandler.serverError())
+        }
+        return res.json(document)
     }
 
 }
