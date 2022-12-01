@@ -122,7 +122,7 @@
                     "Product"
                 ],
                 "description": "Add product in store",
-                "consumes":"multipart/form-data",
+                "consumes": "multipart/form-data",
                 "parameters": [
                     {
                         "name": "name",
@@ -145,15 +145,94 @@
                         "required": true,
                         "type": "file"
                     }
-                ],                
+                ],
                 "responses": {},
                 "security": [
                     {
                         "Authorization": []
                     }
                 ]
-
+            }
+        },
+        "/comp/update/product/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "ID of user that we want to find",
+                    "type": "string"
+                }
+            ],
+            "put": {
+                "tags": [
+                    "Product"
+                ],
+                "description": "Add product in store",
+                "consumes": "multipart/form-data",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "name": "price",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "name": "size",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "name": "image",
+                        "in": "formData",
+                        "required": false,
+                        "type": "file"
+                    }
+                ],
+                "responses": {},
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/comp/delete/product/{id}": {
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "ID of user that we want to find",
+                    "type": "string"
+                }
+            ],
+            "delete": {
+                "tags": [
+                    "Product"
+                ],
+                "description": "Add product in store",
+                "consumes": "multipart/form-data",
                 
+                "responses": {},
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+            }
+        },
+        "/comp/view/products": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "description": "View products in store",                
+                "responses": {}
             }
         }
     },

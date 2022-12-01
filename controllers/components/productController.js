@@ -4,13 +4,15 @@ import { Product } from "../../models"
 import CustomErrorHandler from "../../services/CustomErrorHandler"
 import fs from 'fs'
 import Joi from "joi"
+import productSchema from "../../validators/productValidator"
+var http = require('http');
 
 const storage = multer.diskStorage(
     {
-        destination: (req,file,cb) => cb(null,'uploads/products'),
-        filename:(req,file,cb)=>{
-            const uniqueName = `${Date.now()}-${Math.round(Math.random()*1E9)}${path.extname(file.originalname)}`
-            cb(null,uniqueName)
+        destination: (req, file, cb) => cb(null, 'uploads/products'),
+        filename: (req, file, cb) => {
+            const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`
+            cb(null, uniqueName)
         }
     }
 )
@@ -18,70 +20,154 @@ const storage = multer.diskStorage(
 const handleMultipartData = multer(
     {
         storage,
-        limits:{
-            fileSize:1000000 * 5 //5MB
+        limits: {
+            fileSize: 1000000 * 5 //5MB
         },
     }
 ).single('image')
 
 const productController = {
     //Create
-    async store(req,res,next) {
-        
-        //Multipart form data --==> install multer to handling multi data
-         handleMultipartData(req,res, async (err) => {
-                if(err){
-                    return next(CustomErrorHandler.serverError(err.message))
-                }
-                // console.log(req.body)
-                
-                const filePath = req.file.path
-                console.log('==>>>>>>>',filePath)
-               
+    async store(req, res, next) {
 
-                //Validation
-                const productSchema = Joi.object(
+        //Multipart form data --==> install multer to handling multi data
+        handleMultipartData(req, res, async (err) => {
+            if (err) {
+                return next(CustomErrorHandler.serverError(err.message))
+            }
+            // console.log(req.body)
+
+            const filePath = req.file.path
+            console.log('==>>>>>>>', filePath)
+
+
+            //Validation from productValidator
+
+            //==--->> 2. Joi Validate if error
+            const { error } = productSchema.validate(req.body)
+            if (error) {
+                //Delete the uploaded file when validation failed
+                fs.unlink(`${appRoot}/${filePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
+                    if (err) {
+                        return next(CustomErrorHandler.serverError(err.message))
+                    }
+                }
+                )
+                return next(error)
+            }
+            const { name, price, size } = req.body
+            let document
+
+            try {
+                document = await Product.create(
                     {
-                        name: Joi.string().required(),
-                        price: Joi.number().required(),
-                        size: Joi.string().required(),
-                        image:Joi.string()
+                        name,
+                        price,
+                        size,
+                        image: filePath
                     }
                 )
-        
-                //==--->> 2. Joi Validate if error
-                const { error } = productSchema.validate(req.body)
-                if(error){
-                    //Delete the uploaded file when validation failed
-                    fs.unlink(`${appRoot}/${filePath}`,(err) => { //root_folder/upload/products.extenstion(png/jpg)
-                            if(err){
-                                return next(CustomErrorHandler.serverError(err.message))
-                            }
-                        }
-                    )
-                    return next(error)
-                }
-                const {name,price ,size} = req.body
-                let document
-
-                try {
-                    document = await Product.create(
-                        {
-                            name,
-                            price,
-                            size,
-                            image:filePath
-                        }
-                    )
-                } catch (error) {
-                    return next(error)
-                }
-                res.status(201).json(document)
+            } catch (error) {
+                return next(error)
             }
+            res.status(201).json(document)
+        }
         )
-    }
+    },
 
     //Update
+    update(req, res, next) {
+        handleMultipartData(req, res, async (err) => {
+            if (err) {
+                return next(CustomErrorHandler.serverError(err.message))
+            }
+            // console.log(req.body)
+            let filePath
+            if(req.file){
+                req.file.path
+            }
+            
+            //==--->> 2. Joi Validate if error
+            const { error } = productSchema.validate(req.body)
+            if (error) {
+                //Delete the uploaded file when validation failed
+                if(req.file){
+                    fs.unlink(`${appRoot}/${filePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
+                        if (err) {
+                            return next(CustomErrorHandler.serverError(err.message))
+                        }
+                    }
+                    )
+                }
+                
+                return next(error)
+            }
+            const { name, price, size } = req.body
+            let document
+
+            try {
+                document = await Product.findOneAndUpdate(
+                    {
+                        _id:req.params.id // id => comes from route
+                    },
+                    {
+                        name,
+                        price,
+                        size,
+                        ...(req.file && {image: filePath})
+                        
+                    },
+                    {new : true}
+                )
+                console.log(document)
+            } catch (error) {
+                return next(error)
+            }
+            res.status(201).json(document)
+        }
+        )
+    },
+    
+    //delete 
+    async destroy(req,res,next){
+        const document = await Product.findOneAndRemove(
+            {
+                _id:req.params.id
+            }
+        )
+        if(!document){
+            return next(new Error('Nothing to delete'))
+        }
+
+        //image delete
+        const imagePath = document._doc.image
+
+        fs.unlink(`${appRoot}/${imagePath}`,(err)=>{
+            if(err){
+                return next(CustomErrorHandler.serverError())
+            }
+        })
+        res.json(document)
+
+    },
+
+    //all products
+    async index(req,res,next){
+        let documents
+        //pagination mongoose-pagination
+        try {
+            documents = await Product.find().select('-updatedAt -__v').sort(
+                    {
+                     _id:-1   
+                    }
+                ) 
+            //select() use for which field not show in res
+        } catch (error) {
+            return next(CustomErrorHandler.serverError())
+        }
+        return res.json(documents)
+    }
+
 }
 
 export default productController

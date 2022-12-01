@@ -5,33 +5,10 @@ import admin from "../middlewares/admin"
 
 const router = express.Router()
 
-/**
- * @swagger
- * /register:
- * post:
- *      description: Use to register a user
- *      responses:
- *        200:
- *          description: A successfull response
- *          content:
- *              application/json:
- */
 router.post('/auth/register',[auth,admin],registerController.register)
 
-/**
- * @swagger
- * /login:
- * post:
- *  description: Use to register a user
- */
 router.post('/auth/login',loginController.login)
 
-/**
- * @swagger
- * /user:
- * get:
- *  description: view the verify user
- */
 router.get('/auth/user',auth,userController.me)
 
 router.post('/auth/refresh',refreshController.refresh)
@@ -39,5 +16,11 @@ router.post('/auth/refresh',refreshController.refresh)
 router.post('/auth/logout',auth,loginController.logout)
 
 router.post('/comp/create/product',[auth,admin],productController.store)
+
+router.put('/comp/update/product/:id',[auth,admin],productController.update)
+
+router.delete('/comp/delete/product/:id',[auth,admin],productController.destroy)
+
+router.get('/comp/view/products',productController.index)
 
 export default router
