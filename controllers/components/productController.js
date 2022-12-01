@@ -141,14 +141,19 @@ const productController = {
         }
 
         //image delete
-        const imagePath = document._doc.image
+        const imagePath = document._doc.image 
+        //Note: =>>>> _doc i.e. it return original document without any getter 
+        //                      because in product model I create getter() on image 
+        //http://localhost:5000/uploads/products/1669910953262-946280708.svg
+        //rootFolder/uploads/products/1669910953262-946280708.svg
 
         fs.unlink(`${appRoot}/${imagePath}`, (err) => {
             if (err) {
                 return next(CustomErrorHandler.serverError())
             }
+            return res.json(document)
         })
-        res.json(document)
+        
 
     },
 
