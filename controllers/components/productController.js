@@ -1,5 +1,5 @@
 import multer from "multer"
-import path from 'path'
+import path from "path"
 import { Product } from "../../models"
 import CustomErrorHandler from "../../services/CustomErrorHandler"
 import fs from 'fs'
@@ -20,27 +20,34 @@ const handleMultipartData = multer(
         storage,
         limits:{
             fileSize:1000000 * 5 //5MB
-        }
+        },
     }
 ).single('image')
 
 const productController = {
     //Create
     async store(req,res,next) {
+        
         //Multipart form data --==> install multer to handling multi data
-         handleMultipartData(req,res, async(err) => {
+         handleMultipartData(req,res, async (err) => {
                 if(err){
                     return next(CustomErrorHandler.serverError(err.message))
                 }
-                console.log(req.file)
+                // console.log(req.body)
+                
                 const filePath = req.file.path
+                console.log('==>>>>>>>',filePath)
+               
 
                 //Validation
-                const productSchema = Joi.object({
-                    name: Joi.string().required(),
-                    price: Joi.number().required(),
-                    size: Joi.string().required()
-                })
+                const productSchema = Joi.object(
+                    {
+                        name: Joi.string().required(),
+                        price: Joi.number().required(),
+                        size: Joi.string().required(),
+                        image:Joi.string()
+                    }
+                )
         
                 //==--->> 2. Joi Validate if error
                 const { error } = productSchema.validate(req.body)
@@ -69,11 +76,9 @@ const productController = {
                 } catch (error) {
                     return next(error)
                 }
-
                 res.status(201).json(document)
             }
         )
-
     }
 
     //Update

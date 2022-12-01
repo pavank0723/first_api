@@ -81,7 +81,12 @@
                     "422": {
                         "description": "Unprocessable Entity"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
             }
         },
         "/auth/user": {
@@ -111,7 +116,7 @@
                 ]
             }
         },
-        "/comp/product": {
+        "/comp/create/product": {
             "post": {
                 "tags": [
                     "Product"
@@ -121,27 +126,34 @@
                 "parameters": [
                     {
                         "name": "name",
-                        "in": "string",
+                        "in": "formData",
                         "required": true
                     },
                     {
                         "name": "price",
-                        "in": "number",
+                        "in": "formData",
                         "required": true
                     },
                     {
                         "name": "size",
-                        "in": "string",
+                        "in": "formData",
                         "required": true
                     },
                     {
                         "name": "image",
-                        "in": "file",
+                        "in": "formData",
                         "required": true,
                         "type": "file"
                     }
-                ],
-                "responses": {}
+                ],                
+                "responses": {},
+                "security": [
+                    {
+                        "Authorization": []
+                    }
+                ]
+
+                
             }
         }
     },

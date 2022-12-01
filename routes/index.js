@@ -16,7 +16,7 @@ const router = express.Router()
  *          content:
  *              application/json:
  */
-router.post('/auth/register',registerController.register)
+router.post('/auth/register',[auth,admin],registerController.register)
 
 /**
  * @swagger
