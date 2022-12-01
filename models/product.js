@@ -1,24 +1,30 @@
 import mongoose from "mongoose";
+import { APP_URL } from "../config";
 
 const Schema = mongoose.Schema
 
 const productSchema = new Schema({
-    name: { 
-        type: String, 
-        required: true 
+    name: {
+        type: String,
+        required: true
     },
-    price: { 
-        type: Number, 
-        required: true 
+    price: {
+        type: Number,
+        required: true
     },
-    size: { 
-        type: String, 
-        required: true 
+    size: {
+        type: String,
+        required: true
     },
-    image: { 
-        type: String, 
-        required: true 
+    image: {
+        type: String,
+        required: true,
+        get: (image) => {
+            //https://localhost:5000/uploads/products/1669882893223-409215745.png
+            //----Domain name-------/-----------Already have---------------------
+            return `${APP_URL}/${image}`
+        }
     },
-}, { timestamps: true })
+}, { timestamps: true, toJSON: { getters: true } })
 
 export default mongoose.model('Product', productSchema, 'products')

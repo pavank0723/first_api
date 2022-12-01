@@ -9,9 +9,9 @@ var http = require('http');
 
 const storage = multer.diskStorage(
     {
-        destination: (req, file, cb) => cb(null, 'uploads/products'),
+        destination: (req, file, cb) => cb(null, "uploads/products/"),
         filename: (req, file, cb) => {
-            const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`
+            const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`
             cb(null, uniqueName)
         }
     }
@@ -38,7 +38,8 @@ const productController = {
             // console.log(req.body)
 
             const filePath = req.file.path
-            console.log('==>>>>>>>', filePath)
+            var newFilePath = filePath.split('\\').join('/')
+            console.log('==>>>>>>>', newFilePath)
 
 
             //Validation from productValidator
@@ -47,7 +48,7 @@ const productController = {
             const { error } = productSchema.validate(req.body)
             if (error) {
                 //Delete the uploaded file when validation failed
-                fs.unlink(`${appRoot}/${filePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
+                fs.unlink(`${appRoot}/${newFilePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
                     if (err) {
                         return next(CustomErrorHandler.serverError(err.message))
                     }
@@ -64,7 +65,7 @@ const productController = {
                         name,
                         price,
                         size,
-                        image: filePath
+                        image: newFilePath
                     }
                 )
             } catch (error) {
@@ -86,13 +87,13 @@ const productController = {
             if(req.file){
                 req.file.path
             }
-            
+            var newFilePath = filePath.split('\\').join('/')
             //==--->> 2. Joi Validate if error
             const { error } = productSchema.validate(req.body)
             if (error) {
                 //Delete the uploaded file when validation failed
                 if(req.file){
-                    fs.unlink(`${appRoot}/${filePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
+                    fs.unlink(`${appRoot}/${newFilePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
                         if (err) {
                             return next(CustomErrorHandler.serverError(err.message))
                         }
@@ -114,7 +115,7 @@ const productController = {
                         name,
                         price,
                         size,
-                        ...(req.file && {image: filePath})
+                        ...(req.file && {image: newFilePath})
                         
                     },
                     {new : true}

@@ -41,6 +41,9 @@ app.use(express.json())
 global.appRoot = path.resolve(__dirname)
 app.use(express.urlencoded({extended:false}))
 
+//View image 
+app.use('/uploads',express.static('uploads'))
+
 app.use(routes)
 app.use(errorHandler)
 
