@@ -13,7 +13,7 @@ const app = express()
 import routes from './routes/index'
 
 //#region DB Connection
-mongoose.connect(DB_URL,{useNewUrlParser:true, useUnifiedTopology:true})
+mongoose.connect(DB_URL)
 
 const db = mongoose.connection;
 
