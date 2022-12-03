@@ -70,10 +70,8 @@ const refreshController = {
                 }
             )
         }catch(error){
-            return next(new Error('Something went wrong '+error.message))
+            return next(new Error('Something went wrong ',error.message))
         }
-
-
     }
 }
 

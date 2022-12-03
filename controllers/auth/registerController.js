@@ -7,13 +7,13 @@ import { REFRESH_SECRET } from '../../config'
 
 const registerController = {
     async register(req, res, next) {
-        // [+] {--== Validate ==--} the req
-        // [+] {--== Authorise ==--} the req 
-        // [+] {--== Check ==--} if user is in the database already
-        // [+] {--== Prepare ==--} a model
-        // [+] {--== Store ==--} in database
-        // [+] {--== Generate ==--} the JWT token
-        // [+] {--== Send ==--} res
+        // [+] {--==1. Validate ==--} the req
+        // [+] {--==2. Authorise ==--} the req 
+        // [+] {--==3. Check ==--} if user is in the database already
+        // [+] {--==4. Prepare ==--} a model
+        // [+] {--==5. Store ==--} in database
+        // [+] {--==6. Generate ==--} the JWT token
+        // [+] {--==7. Send ==--} res
 
         //#region ==--->> 1. Validation
         const registerScheme = Joi.object({
@@ -23,6 +23,7 @@ const registerController = {
             confirm_password: Joi.ref('password')
         })
         //#endregion
+        console.log("Schema ",registerScheme)
         console.log(req.body)
 
         //#region ==--->> 2. Joi Validate if error
@@ -65,8 +66,7 @@ const registerController = {
         let refresh_token
         try {
             const result = await user.save()
-            //#endregion 
-
+            
             //#region ==--->> 6. Token 
             access_token = JwtService.sign(
                 {
@@ -82,6 +82,7 @@ const registerController = {
                 '1y',
                 REFRESH_SECRET
             )
+            //#endregion 
 
             //DB whitelist
             await RefreshToken.create(
