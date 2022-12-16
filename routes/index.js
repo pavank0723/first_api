@@ -1,5 +1,5 @@
 import express from "express";
-import { registerController, loginController,userController, refreshController,productController } from "../controllers";
+import { registerController, loginController,userController, refreshController,productController, portfolioController } from "../controllers";
 import auth from "../middlewares/auth";
 import admin from "../middlewares/admin"
 
@@ -24,5 +24,8 @@ router.delete('/comp/delete/product/:id',[auth,admin],productController.destroy)
 router.get('/comp/view/products',productController.index)
 
 router.get('/comp/view/product/:id',productController.show)
+
+router.post('/store/portfolio',portfolioController.store)
+router.put('/edit/portfolio/:id',portfolioController.edit)
 
 export default router

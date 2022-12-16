@@ -1,13 +1,13 @@
-import { Product } from "../../models"
 import CustomErrorHandler from "../../services/CustomErrorHandler"
-import fs from 'fs'
-import productSchema from "../../validators/productValidator"
+import fs from "fs"
 import path from "path"
 import multer from "multer"
+import { Portfolio } from "../../models"
+import portfolioSchema from "../../validators/portfolioValidator"
 
 const storage = multer.diskStorage(
     {
-        destination: (req, file, cb) => cb(null, "uploads/products/"),
+        destination: (req, file, cb) => cb(null, "uploads/portfolio/"),
         filename: (req, file, cb) => {
             const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1e9)}${path.extname(file.originalname)}`
             cb(null, uniqueName)
@@ -24,7 +24,8 @@ const handleMultipartData = multer(
     }
 ).single('image')
 
-const productController = {
+
+const workController = {
     //Create
     async store(req, res, next) {
 
@@ -43,7 +44,7 @@ const productController = {
             //Validation from productValidator
 
             //==--->> 2. Joi Validate if error
-            const { error } = productSchema.validate(req.body)
+            const { error } = portfolioSchema.validate(req.body)
             if (error) {
                 //Delete the uploaded file when validation failed
                 fs.unlink(`${appRoot}/${filePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
@@ -54,15 +55,14 @@ const productController = {
                 )
                 return next(error)
             }
-            const { name, price, size } = req.body
+            const { title,demo } = req.body
             let document
 
             try {
-                document = await Product.create(
+                document = await Portfolio.create(
                     {
-                        name,
-                        price,
-                        size,
+                        title,
+                        demo,
                         image: filePath
                     }
                 )
@@ -74,120 +74,65 @@ const productController = {
         )
     },
 
-    //Update
-    update(req, res, next) {
+    async edit(req, res, next) {
+
+        //Multipart form data --==> install multer to handling multi data
         handleMultipartData(req, res, async (err) => {
             if (err) {
                 return next(CustomErrorHandler.serverError(err.message))
             }
             // console.log(req.body)
             let filePath
-            if (req.file) {
-                filePath = req.file.path
+            if(req.file){
+                filePath = req.file.path.replace(/\\/g, "/")
             }
+            
+
             // var newFilePath = filePath.split('\\').join('/')
+            console.log('==>>>>>>>', filePath)
+
+            //Validation from productValidator
+            
             //==--->> 2. Joi Validate if error
-            const { error } = productSchema.validate(req.body)
+            const { error } = portfolioSchema.validate(req.body)
             if (error) {
                 //Delete the uploaded file when validation failed
-                if (req.file) {
+                if(req.file){
                     fs.unlink(`${appRoot}/${filePath}`, (err) => { //root_folder/upload/products.extenstion(png/jpg)
                         if (err) {
                             return next(CustomErrorHandler.serverError(err.message))
                         }
-
                     }
                     )
                 }
-
                 return next(error)
             }
-            const { name, price, size } = req.body
+            const { title,demo } = req.body
             let document
 
             try {
-                document = await Product.findOneAndUpdate(
+                document = await Portfolio.findOneAndUpdate(
                     {
                         _id: req.params.id // id => comes from route
                     },
                     {
-                        name,
-                        price,
-                        size,
+                        title,
+                        demo,
                         ...(req.file && { image: filePath })
-
                     },
-                    { new: true }
+            
+                    {
+                        new:true
+                    }
                 )
-                console.log(document)
             } catch (error) {
                 return next(error)
             }
+            
             res.status(201).json(document)
         }
         )
     },
-
-    //delete 
-    async destroy(req, res, next) {
-        const document = await Product.findOneAndRemove(
-            {
-                _id: req.params.id
-            }
-        )
-        if (!document) {
-            return next(new Error('Nothing to delete'))
-        }
-
-        //image delete
-        const imagePath = document._doc.image
-        //Note: =>>>> _doc i.e. it return original document without any getter 
-        //                      because in product model I create getter() on image 
-        //http://localhost:5000/uploads/products/1669910953262-946280708.svg
-        //rootFolder/uploads/products/1669910953262-946280708.svg
-
-        fs.unlink(`${appRoot}/${imagePath}`, (err) => {
-            if (err) {
-                return next(CustomErrorHandler.serverError())
-            }
-            return res.json(document)
-        })
-
-
-    },
-
-    //all products
-    async index(req, res, next) {
-        let documents
-        //pagination mongoose-pagination
-        try {
-            documents = await Product.find().select('-updatedAt -__v').sort(
-                {
-                    _id: -1
-                }
-            )
-            //select() use for which field not show in res
-        } catch (error) {
-            return next(CustomErrorHandler.serverError())
-        }
-        return res.json(documents)
-    },
-
-    //product
-    async show(req, res, next) {
-        let document
-        try {
-            document = await Product.findOne(
-                {
-                    _id: req.params.id
-                }
-            ).select('-updatedAt -__v')
-        } catch (error) {
-            return next(CustomErrorHandler.serverError())
-        }
-        return res.json(document)
-    }
-
 }
 
-export default productController
+export default workController

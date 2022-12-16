@@ -8,6 +8,10 @@ import path from 'path'
 import swaggerUi  from 'swagger-ui-express'
 import swaggerDocument from './swagger.json'
 
+import multer from 'multer'
+
+const upload = multer()
+
 const app = express()
 
 import routes from './routes/index'

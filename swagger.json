@@ -216,7 +216,6 @@
                     "Product"
                 ],
                 "description": "Add product in store",
-                "consumes": "multipart/form-data",
                 
                 "responses": {},
                 "security": [
